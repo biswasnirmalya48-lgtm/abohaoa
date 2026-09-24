@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -39,6 +39,8 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
   background-image: radial-gradient(circle at 50% 0%, rgba(190, 220, 255, 0.1), transparent 35%),
     linear-gradient(145deg, rgba(255, 255, 255, 0.025), transparent 45%);
 }
@@ -49,6 +51,13 @@ body {
   -webkit-backdrop-filter: blur(28px) saturate(1.25);
   border: 1px solid var(--glass-border);
   box-shadow: inset 0 1px 0 var(--glass-highlight), 0 18px 60px rgba(4, 8, 17, 0.18);
+}
+
+.glass-soft {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .glass-text {
@@ -80,6 +89,52 @@ body {
 }
 .safe-bottom {
   padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+/* ---------- mobile-first helpers ---------- */
+
+.snap-x-mandatory {
+  scroll-snap-type: x mandatory;
+}
+.snap-start {
+  scroll-snap-align: start;
+}
+
+.press-ring {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.press-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.4), transparent 60%);
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+.press-ring:active::after {
+  opacity: 0.55;
+  transform: scale(1.1);
+  transition: opacity 0s, transform 0s;
+}
+
+.grabber {
+  width: 2.5rem;
+  height: 0.28rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.32);
+}
+
+.temp-shine {
+  background: linear-gradient(180deg, #ffffff 0%, #ffffff 55%, rgba(255, 255, 255, 0.72) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .bengali-display {
@@ -128,6 +183,14 @@ body {
   animation: monsoon-float 5s ease-in-out infinite;
 }
 
+@keyframes float-slow {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -10px, 0); }
+}
+.float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
 @keyframes warm-pulse {
   0%,
   100% { box-shadow: 0 0 0 0 rgba(244, 201, 120, 0.12); }
@@ -136,6 +199,29 @@ body {
 
 .warm-pulse {
   animation: warm-pulse 2.8s ease-out infinite;
+}
+
+@keyframes glow-breathe {
+  0%, 100% { opacity: 0.55; transform: scale(0.96); }
+  50% { opacity: 0.9; transform: scale(1.04); }
+}
+.glow-breathe {
+  animation: glow-breathe 5.5s ease-in-out infinite;
+}
+
+@keyframes sheen {
+  0% { transform: translateX(-120%) skewX(-18deg); }
+  100% { transform: translateX(240%) skewX(-18deg); }
+}
+.sheen::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  animation: sheen 3.4s ease-in-out infinite;
+  pointer-events: none;
 }
 
 /* ---- scene animations ---- */
@@ -306,7 +392,10 @@ body {
   .heat-haze,
   .wordmark,
   .pulse-ring,
-  .droplet {
+  .droplet,
+  .float-slow,
+  .glow-breathe,
+  .sheen::before {
     animation: none !important;
   }
   .monsoon-float,

@@ -1,8 +1,8 @@
-import type { ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { City } from "../types/weather";
 import { useAppStore } from "../store/useAppStore";
-import { IconCheck, IconClose, IconPin, IconTrash } from "./Icons";
+import { IconCheck, IconPin, IconTrash, IconSearch } from "./Icons";
+import BottomSheet from "./BottomSheet";
 
 interface Props {
   open: boolean;
@@ -12,113 +12,104 @@ interface Props {
   onClose: () => void;
   onSelectCity: (city: City) => void;
   onUseCurrentLocation: () => void;
+  onSearch: () => void;
 }
 
-export function Drawer({
+export default function SavedPanel({
   open,
+  geoAvailable,
+  activeCityId,
+  activeIsCurrent,
   onClose,
-  title,
-  children,
-}: {
-  open: boolean;
-  onClose: () => void;
-  title: string;
-  children: ReactNode;
-}) {
-  return (
-    <AnimatePresence>
-      {open && (
-        <motion.div className="fixed inset-0 z-50" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-[4px]" onClick={onClose} />
-          <motion.aside
-            data-no-pull
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 340, damping: 34 }}
-            className="absolute right-0 top-0 h-full w-full max-w-[360px] glass rounded-l-[28px] flex flex-col shadow-2xl"
-          >
-            <div className="flex items-center justify-between px-6 safe-top pb-3">
-              <h2 className="text-white text-[17px] font-normal tracking-tight">{title}</h2>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={onClose}
-                aria-label="Close panel"
-                className="w-9 h-9 rounded-full bg-white/10 text-white/70 hover:text-white flex items-center justify-center cursor-pointer"
-              >
-                <IconClose className="w-[17px] h-[17px]" />
-              </motion.button>
-            </div>
-            <div className="flex-1 overflow-y-auto thin-scroll px-4 pb-8">{children}</div>
-          </motion.aside>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
-export default function SavedPanel({ open, geoAvailable, activeCityId, activeIsCurrent, onClose, onSelectCity, onUseCurrentLocation }: Props) {
+  onSelectCity,
+  onUseCurrentLocation,
+  onSearch,
+}: Props) {
   const savedCities = useAppStore((s) => s.savedCities);
   const removeSaved = useAppStore((s) => s.removeSaved);
 
   return (
-    <Drawer open={open} onClose={onClose} title="Saved locations">
-      {geoAvailable && (
-        <button
-          onClick={onUseCurrentLocation}
-          className="w-full flex items-center gap-3 py-3.5 px-3 rounded-2xl hover:bg-white/[0.07] transition-colors text-left cursor-pointer mb-1"
-        >
-          <span className="relative flex w-2 h-2 ml-1">
-            <span className="absolute inset-0 rounded-full bg-emerald-300/90" />
-            <span className="absolute inset-0 rounded-full bg-emerald-300/60 pulse-ring" />
-          </span>
-          <span className="flex-1 text-white text-[15px] font-light">My location</span>
-          {activeIsCurrent && <IconCheck className="w-4 h-4 text-white/70" />}
-        </button>
-      )}
-
-      {savedCities.length === 0 && (
-        <p className="text-white/40 text-[13px] font-light px-3 py-8 text-center leading-relaxed">
-          No saved cities yet.
-          <br />
-          Tap the star next to a search result to keep it here.
-        </p>
-      )}
-
-      {savedCities.map((city) => (
-        <motion.div
-          key={city.id}
-          layout
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-          className="group flex items-center"
-        >
-          <button
-            onClick={() => onSelectCity(city)}
-            className="flex-1 flex items-center gap-3 py-3.5 px-3 rounded-2xl hover:bg-white/[0.07] transition-colors text-left cursor-pointer min-w-0"
-          >
-            <IconPin className="w-[17px] h-[17px] text-white/40 shrink-0" />
-            <span className="flex flex-col min-w-0 flex-1">
-              <span className="text-white text-[15px] font-light truncate">{city.name}</span>
-              <span className="text-white/40 text-[12px] font-light truncate">
-                {[city.state, city.country].filter(Boolean).join(", ")}
-              </span>
-            </span>
-            {activeCityId === city.id && <IconCheck className="w-4 h-4 text-white/70 shrink-0" />}
-          </button>
+    <BottomSheet open={open} onClose={onClose} title="Saved locations" subtitle={`${savedCities.length} pinned`}>
+      <div className="px-3 pb-6">
+        {geoAvailable && (
           <motion.button
-            whileHover={{ scale: 1.12 }}
-            whileTap={{ scale: 0.88 }}
-            onClick={() => removeSaved(city.id)}
-            aria-label={`Remove ${city.name}`}
-            className="p-3 text-white/25 hover:text-red-200/90 transition-colors cursor-pointer"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={onUseCurrentLocation}
+            className="w-full flex items-center gap-3 py-3.5 px-3 rounded-2xl bg-white/[0.05] text-left cursor-pointer mb-2"
           >
-            <IconTrash />
+            <span className="relative flex w-2.5 h-2.5 ml-1">
+              <span className="absolute inset-0 rounded-full bg-emerald-300" />
+              <span className="absolute inset-0 rounded-full bg-emerald-300/60 pulse-ring" />
+            </span>
+            <span className="flex-1 text-white text-[15px] font-medium">My location</span>
+            {activeIsCurrent && <IconCheck className="w-4 h-4 text-emerald-300" />}
           </motion.button>
-        </motion.div>
-      ))}
-    </Drawer>
+        )}
+
+        {savedCities.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center text-center px-6 py-10"
+          >
+            <div className="w-14 h-14 rounded-full bg-white/[0.06] flex items-center justify-center mb-4 text-white/40">
+              <IconPin className="w-6 h-6" />
+            </div>
+            <p className="text-white/45 text-[13.5px] font-light leading-relaxed mb-5">
+              No saved cities yet. Search for a place and tap the star to keep it here.
+            </p>
+            <motion.button
+              whileTap={{ scale: 0.94 }}
+              onClick={onSearch}
+              className="h-10 px-5 rounded-full bg-white/90 text-slate-900 text-[13.5px] font-semibold flex items-center gap-2 cursor-pointer"
+            >
+              <IconSearch className="w-4 h-4" /> Find a city
+            </motion.button>
+          </motion.div>
+        ) : (
+          <AnimatePresence initial={false}>
+            {savedCities.map((city, i) => (
+              <motion.div
+                key={city.id}
+                layout
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, x: 60, transition: { duration: 0.25 } }}
+                transition={{ delay: i * 0.03, type: "spring", stiffness: 340, damping: 30 }}
+                className="flex items-center"
+              >
+                <motion.button
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => onSelectCity(city)}
+                  className="flex-1 flex items-center gap-3 py-3.5 px-3 rounded-2xl hover:bg-white/[0.06] transition-colors text-left cursor-pointer min-w-0"
+                >
+                  <span className="w-9 h-9 rounded-full bg-white/[0.07] flex items-center justify-center shrink-0">
+                    <IconPin className="w-[17px] h-[17px] text-white/60" />
+                  </span>
+                  <span className="flex flex-col min-w-0 flex-1">
+                    <span className="text-white text-[15px] font-medium truncate">{city.name}</span>
+                    <span className="text-white/40 text-[12px] font-light truncate">
+                      {[city.state, city.country].filter(Boolean).join(", ")}
+                    </span>
+                  </span>
+                  {activeCityId === city.id && <IconCheck className="w-4 h-4 text-emerald-300 shrink-0" />}
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.12 }}
+                  whileTap={{ scale: 0.82 }}
+                  onClick={() => removeSaved(city.id)}
+                  aria-label={`Remove ${city.name}`}
+                  className="p-3 text-white/25 hover:text-red-300 transition-colors cursor-pointer"
+                >
+                  <IconTrash />
+                </motion.button>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        )}
+      </div>
+    </BottomSheet>
   );
 }

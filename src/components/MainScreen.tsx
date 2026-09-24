@@ -13,6 +13,7 @@ import TopBar from "./TopBar";
 import Hero, { HeroSkeleton } from "./Hero";
 import HourlyStrip from "./HourlyStrip";
 import ForecastPanel from "./ForecastPanel";
+import Dock from "./Dock";
 import SearchModal from "./SearchModal";
 import SavedPanel from "./SavedPanel";
 import SettingsPanel from "./SettingsPanel";
@@ -50,6 +51,7 @@ export default function MainScreen({ geoStatus, geoCoords, onRequestLocation, in
   const [searchOpen, setSearchOpen] = useState(initialSearchOpen);
   const [savedOpen, setSavedOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [sheetExpanded, setSheetExpanded] = useState(false);
   const [direction, setDirection] = useState(1);
   const [currentPlaceName, setCurrentPlaceName] = useState("My location");
 
@@ -140,6 +142,25 @@ export default function MainScreen({ geoStatus, geoCoords, onRequestLocation, in
   const anyOverlayOpen = searchOpen || savedOpen || settingsOpen;
   const { pull, refreshing: pullActive } = usePullToRefresh(refresh, !anyOverlayOpen && !loading && !!coords);
 
+  const openSearch = useCallback(() => {
+    setSavedOpen(false);
+    setSettingsOpen(false);
+    setSheetExpanded(false);
+    setSearchOpen(true);
+  }, []);
+  const openSaved = useCallback(() => {
+    setSearchOpen(false);
+    setSettingsOpen(false);
+    setSheetExpanded(false);
+    setSavedOpen(true);
+  }, []);
+  const openSettings = useCallback(() => {
+    setSearchOpen(false);
+    setSavedOpen(false);
+    setSheetExpanded(false);
+    setSettingsOpen(true);
+  }, []);
+
   const onSelectCity = useCallback(
     (city: City) => {
       addRecent(city);
@@ -200,14 +221,11 @@ export default function MainScreen({ geoStatus, geoCoords, onRequestLocation, in
         <TopBar
           placeName={coords ? placeName : "Abohaoa"}
           isCurrentLocation={active.type === "current" && geoReady}
-          refreshing={refreshing}
+          locating={geoStatus === "locating"}
           offline={offline || (!online && !!data)}
           demo={demo}
           lastUpdated={data?.fetchedAt ?? null}
-          onSearch={() => setSearchOpen(true)}
-          onSaved={() => setSavedOpen(true)}
-          onSettings={() => setSettingsOpen(true)}
-          onRefresh={() => void refresh()}
+          onSearch={openSearch}
         />
 
         {loading || (!coords && !error) ? (
@@ -222,17 +240,38 @@ export default function MainScreen({ geoStatus, geoCoords, onRequestLocation, in
               canPrev={activeIndex > 0}
               canNext={activeIndex < pages.length - 1}
               onArrow={onSwipe}
+              onSelectPage={goToPage}
               pageKey={activeKey}
+              pageCount={pages.length}
+              activeIndex={activeIndex}
             />
-            <div className="pb-20 md:pb-16">
+            <div className="pb-[calc(env(safe-area-inset-bottom)+164px)]">
               <HourlyStrip data={data} tempUnit={settings.tempUnit} />
             </div>
-            <ForecastPanel data={data} tempUnit={settings.tempUnit} speedUnit={settings.speedUnit} />
+            <ForecastPanel
+              data={data}
+              tempUnit={settings.tempUnit}
+              speedUnit={settings.speedUnit}
+              expanded={sheetExpanded}
+              onExpandedChange={setSheetExpanded}
+            />
           </>
         ) : (
           <div className="flex-1" />
         )}
       </motion.div>
+
+      {data && (
+        <Dock
+          hidden={sheetExpanded || anyOverlayOpen}
+          refreshing={refreshing}
+          savedCount={savedCities.length}
+          onSearch={openSearch}
+          onSaved={openSaved}
+          onRefresh={() => void refresh()}
+          onSettings={openSettings}
+        />
+      )}
 
       {/* no-location fallback */}
       <AnimatePresence>
@@ -265,7 +304,7 @@ export default function MainScreen({ geoStatus, geoCoords, onRequestLocation, in
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.96 }}
-                  onClick={() => setSearchOpen(true)}
+                  onClick={openSearch}
                   className="h-11 rounded-full glass glass-text text-[14px] font-light flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <IconSearch className="w-4 h-4" /> Search for a city
@@ -306,6 +345,10 @@ export default function MainScreen({ geoStatus, geoCoords, onRequestLocation, in
             setSavedOpen(false);
           }}
           onUseCurrentLocation={() => void onUseCurrentLocation()}
+          onSearch={() => {
+            setSavedOpen(false);
+            openSearch();
+          }}
         />
         <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       </div>

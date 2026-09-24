@@ -55,7 +55,7 @@ export default function OnboardingScreen({ status, onAllow, onChooseCity }: Prop
           )}
         </div>
 
-        <h2 className="text-white text-2xl md:text-3xl font-light tracking-tight mb-4">
+        <h2 className="text-white text-2xl md:text-3xl font-semibold tracking-tight mb-4">
           Weather, where you are
         </h2>
         <p className="text-white/55 text-[15px] leading-relaxed font-light mb-12">

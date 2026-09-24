@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { City } from "../types/weather";
 import { searchCities } from "../services/weatherApi";
 import { useAppStore } from "../store/useAppStore";
 import { IconClose, IconPin, IconSearch, IconStar } from "./Icons";
 import { Spinner } from "./OnboardingScreen";
+import BottomSheet from "./BottomSheet";
 
 interface Props {
   open: boolean;
@@ -30,7 +31,7 @@ export default function SearchModal({ open, demo, geoAvailable, onClose, onSelec
       setQuery("");
       setResults([]);
       setError(null);
-      setTimeout(() => inputRef.current?.focus(), 320);
+      setTimeout(() => inputRef.current?.focus(), 380);
     }
   }, [open]);
 
@@ -62,16 +63,22 @@ export default function SearchModal({ open, demo, geoAvailable, onClose, onSelec
 
   const isSaved = (c: City) => savedCities.some((s) => s.id === c.id);
 
-  const row = (city: City, sub?: string) => (
-    <div key={city.id} className="group flex items-center">
+  const row = (city: City, i: number, sub?: string) => (
+    <motion.div
+      key={city.id}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: Math.min(i * 0.035, 0.3), duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      className="flex items-center"
+    >
       <motion.button
-        whileTap={{ scale: 0.985 }}
+        whileTap={{ scale: 0.98, backgroundColor: "rgba(255,255,255,0.08)" }}
         onClick={() => onSelectCity(city)}
-        className="flex-1 flex items-center gap-3.5 py-3.5 px-2 text-left rounded-xl hover:bg-white/[0.06] transition-colors cursor-pointer"
+        className="flex-1 flex items-center gap-3.5 py-3.5 px-3 text-left rounded-2xl cursor-pointer min-w-0"
       >
         <IconPin className="w-[18px] h-[18px] text-white/40 shrink-0" />
         <span className="flex flex-col min-w-0">
-          <span className="text-white text-[15px] font-light truncate">{city.name}</span>
+          <span className="text-white text-[15px] font-medium truncate">{city.name}</span>
           <span className="text-white/40 text-[12px] font-light truncate">
             {sub ?? [city.state, city.country].filter(Boolean).join(", ")}
           </span>
@@ -79,113 +86,106 @@ export default function SearchModal({ open, demo, geoAvailable, onClose, onSelec
       </motion.button>
       <motion.button
         whileHover={{ scale: 1.15 }}
-        whileTap={{ scale: 0.85 }}
+        whileTap={{ scale: 0.8, rotate: -20 }}
         onClick={() => toggleSaved(city)}
         aria-label={isSaved(city) ? `Remove ${city.name} from saved` : `Save ${city.name}`}
-        className={`p-2.5 rounded-full cursor-pointer ${isSaved(city) ? "text-amber-200" : "text-white/25 hover:text-white/60"}`}
+        className={`p-2.5 rounded-full cursor-pointer ${isSaved(city) ? "text-amber-300" : "text-white/25 hover:text-white/60"}`}
       >
-        <IconStar className="w-[17px] h-[17px]" filled={isSaved(city)} />
+        <motion.span animate={{ scale: isSaved(city) ? 1 : 0.92 }} className="block">
+          <IconStar className="w-[18px] h-[18px]" filled={isSaved(city)} />
+        </motion.span>
       </motion.button>
-    </div>
+    </motion.div>
   );
 
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          className="fixed inset-0 z-50 flex justify-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <motion.div
-            className="absolute inset-0 bg-black/45 backdrop-blur-[6px]"
-            onClick={onClose}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+    <BottomSheet open={open} onClose={onClose} bare maxHeight="92vh">
+      <div className="sticky top-0 z-10 px-4 pt-1 pb-3 bg-[rgba(9,18,30,0.6)] backdrop-blur-xl">
+        <div className="flex items-center gap-3 px-4 h-12 rounded-full bg-white/[0.07] border border-white/10">
+          <IconSearch className="w-[18px] h-[18px] text-white/45 shrink-0" />
+          <input
+            ref={inputRef}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => e.key === "Escape" && onClose()}
+            placeholder="Search any city…"
+            className="flex-1 bg-transparent outline-none text-white text-[16px] font-light placeholder:text-white/35"
           />
-          <motion.div
-            initial={{ opacity: 0, y: -30, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -24, scale: 0.97 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-lg mx-4 mt-[10vh] md:mt-[12vh] h-fit max-h-[74vh] glass rounded-3xl flex flex-col overflow-hidden shadow-2xl"
-          >
-            <div className="flex items-center gap-3 px-5 pt-5 pb-3">
-              <IconSearch className="w-[18px] h-[18px] text-white/45 shrink-0" />
-              <input
-                ref={inputRef}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Escape" && onClose()}
-                placeholder="Search any city…"
-                className="flex-1 bg-transparent outline-none text-white text-[16px] font-light placeholder:text-white/35"
-              />
+          <AnimatePresence>
+            {query && (
               <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={onClose}
-                aria-label="Close search"
+                initial={{ opacity: 0, scale: 0.6 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.6 }}
+                whileTap={{ scale: 0.85 }}
+                onClick={() => setQuery("")}
+                aria-label="Clear"
                 className="text-white/40 hover:text-white/80 p-1 cursor-pointer"
               >
-                <IconClose className="w-[18px] h-[18px]" />
+                <IconClose className="w-4 h-4" />
               </motion.button>
-            </div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
 
-            <div className="flex-1 overflow-y-auto thin-scroll px-4 pb-4">
-              {query.trim() === "" ? (
-                <>
-                  {geoAvailable && (
-                    <button
-                      onClick={onUseCurrentLocation}
-                      className="w-full flex items-center gap-3.5 py-3.5 px-2 rounded-xl hover:bg-white/[0.06] transition-colors text-left cursor-pointer"
-                    >
-                      <span className="relative flex w-[18px] h-[18px] items-center justify-center shrink-0">
-                        <IconPin className="w-[18px] h-[18px] text-emerald-300/90" />
-                      </span>
-                      <span className="text-white/90 text-[15px] font-light">Use my current location</span>
-                    </button>
-                  )}
-                  {recentSearches.length > 0 && (
-                    <>
-                      <p className="text-white/35 text-[11px] tracking-[0.16em] uppercase font-light px-2 pt-4 pb-1">
-                        Recent
-                      </p>
-                      {recentSearches.map((c) => row(c))}
-                    </>
-                  )}
-                  {savedCities.length > 0 && (
-                    <>
-                      <p className="text-white/35 text-[11px] tracking-[0.16em] uppercase font-light px-2 pt-4 pb-1">
-                        Saved
-                      </p>
-                      {savedCities.map((c) => row(c))}
-                    </>
-                  )}
-                  {recentSearches.length === 0 && savedCities.length === 0 && !geoAvailable && (
-                    <p className="text-white/35 text-[13px] font-light px-2 py-6 text-center">
-                      Type the name of a city to begin.
-                    </p>
-                  )}
-                </>
-              ) : searching ? (
-                <div className="flex justify-center py-10 text-white/50">
-                  <Spinner />
-                </div>
-              ) : error ? (
-                <p className="text-red-200/70 text-[13px] font-light px-2 py-6 text-center">{error}</p>
-              ) : results.length === 0 ? (
-                <p className="text-white/40 text-[13px] font-light px-2 py-6 text-center">
-                  No cities found for “{query.trim()}”
-                </p>
-              ) : (
-                results.map((c) => row(c))
-              )}
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+      <div className="px-3 pb-6">
+        {query.trim() === "" ? (
+          <>
+            {geoAvailable && (
+              <motion.button
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={onUseCurrentLocation}
+                className="w-full flex items-center gap-3.5 py-3.5 px-3 rounded-2xl bg-white/[0.05] text-left cursor-pointer mb-2"
+              >
+                <span className="relative flex w-[18px] h-[18px] items-center justify-center shrink-0">
+                  <IconPin className="w-[18px] h-[18px] text-emerald-300" />
+                </span>
+                <span className="text-white/90 text-[15px] font-medium">Use my current location</span>
+              </motion.button>
+            )}
+            {recentSearches.length > 0 && (
+              <>
+                <SectionLabel>Recent</SectionLabel>
+                {recentSearches.map((c, i) => row(c, i))}
+              </>
+            )}
+            {savedCities.length > 0 && (
+              <>
+                <SectionLabel>Saved</SectionLabel>
+                {savedCities.map((c, i) => row(c, i))}
+              </>
+            )}
+            {recentSearches.length === 0 && savedCities.length === 0 && !geoAvailable && (
+              <p className="text-white/35 text-[13px] font-light px-2 py-8 text-center">
+                Type the name of a city to begin.
+              </p>
+            )}
+          </>
+        ) : searching ? (
+          <div className="flex justify-center py-12 text-white/50">
+            <Spinner />
+          </div>
+        ) : error ? (
+          <p className="text-red-200/70 text-[13px] font-light px-2 py-8 text-center">{error}</p>
+        ) : results.length === 0 ? (
+          <p className="text-white/40 text-[13px] font-light px-2 py-8 text-center">
+            No cities found for “{query.trim()}”
+          </p>
+        ) : (
+          results.map((c, i) => row(c, i))
+        )}
+      </div>
+    </BottomSheet>
+  );
+}
+
+function SectionLabel({ children }: { children: ReactNode }) {
+  return (
+    <p className="text-white/35 text-[11px] tracking-[0.16em] uppercase font-semibold px-3 pt-4 pb-1">
+      {children}
+    </p>
   );
 }
