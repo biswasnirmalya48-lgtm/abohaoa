@@ -26,16 +26,41 @@ export default function App() {
     return () => clearTimeout(t);
   }, []);
 
+  // ask for location automatically the moment a first-time visitor enters
+  const [autoAsked, setAutoAsked] = useState(false);
+  useEffect(() => {
+    if (autoAsked || hasCompletedOnboarding) return;
+    setAutoAsked(true);
+    void geo.request();
+  }, [autoAsked, hasCompletedOnboarding, geo.request]);
+
+  // don't sit on the splash forever if the permission prompt is ignored
+  const [locatingTimedOut, setLocatingTimedOut] = useState(false);
+  useEffect(() => {
+    if (geo.status !== "locating") return;
+    const t = setTimeout(() => setLocatingTimedOut(true), 10000);
+    return () => clearTimeout(t);
+  }, [geo.status]);
+
   // decide where to go after the splash
   useEffect(() => {
     if (!splashDone || stage !== "loading") return;
+    if (geo.status === "locating" && !locatingTimedOut) return;
     if (hasCompletedOnboarding || geo.status === "granted") {
       if (!hasCompletedOnboarding) completeOnboarding();
       setStage("app");
     } else {
       setStage("onboarding");
     }
-  }, [splashDone, stage, hasCompletedOnboarding, geo.status, completeOnboarding]);
+  }, [splashDone, stage, hasCompletedOnboarding, geo.status, locatingTimedOut, completeOnboarding]);
+
+  // permission approved late (native prompt answered on any screen) → enter the app
+  useEffect(() => {
+    if (geo.status === "granted" && geo.coords && stage !== "app") {
+      if (!hasCompletedOnboarding) completeOnboarding();
+      setStage("app");
+    }
+  }, [geo.status, geo.coords, stage, hasCompletedOnboarding, completeOnboarding]);
 
   // apply stored default location once when entering the app
   const [appliedDefault, setAppliedDefault] = useState(false);

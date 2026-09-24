@@ -59,8 +59,8 @@ export default function OnboardingScreen({ status, onAllow, onChooseCity }: Prop
           Weather, where you are
         </h2>
         <p className="text-white/55 text-[15px] leading-relaxed font-light mb-12">
-          Abohaoa uses your location once to show live weather for the place you're standing in.
-          Browser location stays preferred; a rough network estimate is used only if needed.
+          We asked for your location as you arrived so the sky matches your street.
+          A rough network estimate is used only if needed — nothing ever leaves your device.
         </p>
 
         {status === "denied" && (
@@ -93,7 +93,8 @@ export default function OnboardingScreen({ status, onAllow, onChooseCity }: Prop
             </span>
           ) : (
             <>
-              <IconPin className="w-[18px] h-[18px]" /> Allow location
+              <IconPin className="w-[18px] h-[18px]" />
+              {status === "denied" || status === "error" ? "Try again" : "Allow location"}
             </>
           )}
         </motion.button>
