@@ -1,8 +1,9 @@
-import { AnimatePresence, motion, type PanInfo } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion, type PanInfo } from "framer-motion";
 import type { WeatherData } from "../types/weather";
 import type { TempUnit } from "../lib/units";
 import { celsiusTo, formatTemp } from "../lib/units";
 import AnimatedNumber from "./AnimatedNumber";
+import MadeWithLove from "./MadeWithLove";
 import { IconChevronLeft, IconChevronRight } from "./Icons";
 
 interface Props {
@@ -43,6 +44,7 @@ export default function Hero({
 }: Props) {
   const { current, daily } = data;
   const today = daily[0];
+  const reduced = useReducedMotion();
   const description = current.weather.description.replace(/\b\w/g, (c) => c.toUpperCase());
 
   const handleDragEnd = (_: unknown, info: PanInfo) => {
@@ -63,7 +65,13 @@ export default function Hero({
           transition={{ type: "spring", stiffness: 320, damping: 16 }}
           className="absolute top-1 right-2 z-10 sticker comic-title text-[15px] px-3 py-1 bg-[var(--comic-yellow)]"
         >
-          {sfx}
+          <motion.span
+            className="inline-block"
+            animate={reduced ? undefined : { rotate: [-2, 2, -2] }}
+            transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+          >
+            {sfx}
+          </motion.span>
         </motion.div>
       </AnimatePresence>
 
@@ -93,6 +101,8 @@ export default function Hero({
         </motion.button>
       )}
 
+      <MadeWithLove tone="paper" className="mb-1" delay={0.35} />
+
       <motion.div
         drag="x"
         dragDirectionLock
@@ -113,33 +123,38 @@ export default function Hero({
             className="flex flex-col items-center text-center"
           >
             <motion.div
-              whileTap={{ scale: 0.94 }}
-              transition={{ type: "spring", stiffness: 400, damping: 16 }}
-              className="relative flex items-start cursor-pointer"
+              animate={reduced ? undefined : { y: [0, -5, 0] }}
+              transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
             >
-              <AnimatedNumber
-                value={celsiusTo(current.temp, tempUnit)}
-                className="outline-text text-[96px] md:text-[150px] leading-[0.95] tabular-nums"
-              />
-              <span className="outline-text text-3xl md:text-5xl mt-2 md:mt-4">
-                {tempUnit === "c" ? "°C" : "°F"}
-              </span>
+              <motion.div
+                whileTap={{ scale: 0.94 }}
+                transition={{ type: "spring", stiffness: 400, damping: 16 }}
+                className="relative flex items-start cursor-pointer"
+              >
+                <AnimatedNumber
+                  value={celsiusTo(current.temp, tempUnit)}
+                  className="outline-text text-[96px] md:text-[150px] leading-[0.95] tabular-nums"
+                />
+                <span className="outline-text text-3xl md:text-5xl mt-2 md:mt-4">
+                  {tempUnit === "c" ? "°C" : "°F"}
+                </span>
+              </motion.div>
             </motion.div>
 
             {/* condition as a speech bubble */}
             <motion.div
-              initial={{ opacity: 0, y: 12, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: 0.1, type: "spring", stiffness: 300, damping: 20 }}
+              initial={{ opacity: 0, scale: 1.14, rotate: -4 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ delay: 0.1, type: "spring", stiffness: 320, damping: 15 }}
               className="speech comic-body font-bold text-[17px] md:text-xl px-5 py-2 mt-5 mb-4"
             >
               {description}!
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.18, duration: 0.4 }}
+              initial={{ opacity: 0, scale: 1.1, rotate: 3 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ delay: 0.18, type: "spring", stiffness: 300, damping: 16 }}
               className="sticker comic-body text-[13px] px-4 py-1.5"
             >
               <span>Feels {formatTemp(current.feelsLike, tempUnit)}</span>

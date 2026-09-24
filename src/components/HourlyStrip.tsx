@@ -15,8 +15,8 @@ export default function HourlyStrip({ data, tempUnit }: Props) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 26 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 26, scale: 0.97, rotate: -1.2 }}
+      animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
       transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
       className="relative z-20 mx-3 md:mx-auto md:max-w-3xl"
     >
@@ -28,8 +28,8 @@ export default function HourlyStrip({ data, tempUnit }: Props) {
             return (
               <motion.div
                 key={h.dt}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 12, rotate: i % 2 ? 3 : -3 }}
+                animate={{ opacity: 1, y: 0, rotate: 0 }}
                 transition={{ delay: 0.26 + i * 0.02, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ y: -3 }}
                 className={`comic-body relative flex flex-col items-center gap-1.5 min-w-[60px] py-2 rounded-xl flex-shrink-0 snap-start border-2 ${

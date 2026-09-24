@@ -38,11 +38,11 @@ export default function Dock({
       className="fixed z-[35] left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2.5 py-2 rounded-full panel"
       style={{ bottom: "calc(env(safe-area-inset-bottom) + 88px)" }}
     >
-      <DockButton label="Search city" onClick={onSearch}>
+      <DockButton label="Search city" onClick={onSearch} idx={0}>
         <IconSearch className="w-[19px] h-[19px]" />
       </DockButton>
 
-      <DockButton label="Saved locations" onClick={onSaved}>
+      <DockButton label="Saved locations" onClick={onSaved} idx={1}>
         <IconBookmark className="w-[19px] h-[19px]" />
         {savedCount > 0 && (
           <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-[var(--comic-red)] border-2 border-[var(--ink)] text-[9px] font-bold text-white flex items-center justify-center">
@@ -51,11 +51,11 @@ export default function Dock({
         )}
       </DockButton>
 
-      <DockButton label="Refresh weather" onClick={onRefresh}>
+      <DockButton label="Refresh weather" onClick={onRefresh} idx={2}>
         {refreshing ? <Spinner /> : <IconRefresh className="w-[19px] h-[19px]" />}
       </DockButton>
 
-      <DockButton label="Settings" onClick={onSettings}>
+      <DockButton label="Settings" onClick={onSettings} idx={3}>
         <IconSettings className="w-[19px] h-[19px]" />
       </DockButton>
     </motion.div>
@@ -66,13 +66,18 @@ function DockButton({
   label,
   onClick,
   children,
+  idx,
 }: {
   label: string;
   onClick: () => void;
   children: ReactNode;
+  idx: number;
 }) {
   return (
     <motion.button
+      initial={{ scale: 0, rotate: -18 }}
+      animate={{ scale: 1, rotate: 0 }}
+      transition={{ type: "spring", stiffness: 380, damping: 15, delay: 0.35 + idx * 0.07 }}
       whileTap={{ scale: 0.86 }}
       whileHover={{ scale: 1.06 }}
       onClick={onClick}

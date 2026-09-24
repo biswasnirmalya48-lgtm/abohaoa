@@ -3,10 +3,12 @@ import { motion, useReducedMotion } from "framer-motion";
 interface Props {
   className?: string;
   delay?: number;
+  /** ink = on paper surfaces, paper = on the dark sky */
+  tone?: "ink" | "paper";
 }
 
 /** Tiny comic caption credit, set at the foot of every surface. */
-export default function MadeWithLove({ className = "", delay = 0.4 }: Props) {
+export default function MadeWithLove({ className = "", delay = 0.4, tone = "ink" }: Props) {
   const reduced = useReducedMotion();
 
   return (
@@ -14,7 +16,10 @@ export default function MadeWithLove({ className = "", delay = 0.4 }: Props) {
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.5, ease: "easeOut" }}
-      className={`comic-body flex items-center justify-center gap-1.5 -rotate-1 select-none text-[10.5px] font-bold tracking-[0.06em] text-[var(--ink)]/45 ${className}`}
+      style={tone === "paper" ? { textShadow: "0 1px 0 rgba(20,20,28,0.6)" } : undefined}
+      className={`comic-body flex items-center justify-center gap-1.5 -rotate-1 select-none text-[10.5px] font-bold tracking-[0.06em] ${
+        tone === "paper" ? "text-white/75" : "text-[var(--ink)]/45"
+      } ${className}`}
     >
       made with
       <motion.span

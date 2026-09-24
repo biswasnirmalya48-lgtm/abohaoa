@@ -35,6 +35,9 @@ export default function TopBar({
       <motion.button
         onClick={onSearch}
         whileTap={{ scale: 0.9 }}
+        initial={{ scale: 1.3, rotate: -10, opacity: 0 }}
+        animate={{ scale: 1, rotate: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 320, damping: 17, delay: 0.15 }}
         aria-label="Change location"
         className="relative shrink-0 w-11 h-11 rounded-full panel comic-press flex items-center justify-center cursor-pointer text-[var(--ink)]"
       >

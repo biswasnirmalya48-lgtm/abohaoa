@@ -121,8 +121,8 @@ export default function ForecastPanel({
               return (
                 <motion.div
                   key={d.dt}
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, x: -12, rotate: i % 2 ? -1.5 : 1.5 }}
+                  animate={{ opacity: 1, x: 0, rotate: 0 }}
                   transition={{ delay: expanded ? 0.05 + i * 0.045 : 0, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                   whileHover={{ backgroundColor: "rgba(20,20,28,0.04)" }}
                   className="grid grid-cols-[64px_26px_40px_1fr] items-center gap-2 py-2.5 px-1 rounded-xl border-b-2 border-dashed border-[var(--ink)]/15 last:border-none"
@@ -246,9 +246,9 @@ function MetricCard({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 14, scale: 0.96 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ delay: 0.12 + index * 0.04, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, scale: 1.1, rotate: -2.5 }}
+      animate={{ opacity: 1, scale: 1, rotate: 0 }}
+      transition={{ delay: 0.12 + index * 0.04, type: "spring", stiffness: 300, damping: 17 }}
       whileTap={{ scale: 0.97 }}
       className="bg-white border-[2.5px] border-[var(--ink)] comic-shadow-sm rounded-xl px-3.5 py-3 cursor-default"
     >
