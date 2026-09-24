@@ -1,0 +1,319 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --glass-bg: rgba(9, 18, 30, 0.44);
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass-highlight: rgba(255, 255, 255, 0.1);
+  --glass-text: rgba(255, 255, 255, 0.94);
+  --glass-text-dim: rgba(255, 255, 255, 0.58);
+  --accent: #b9d8ff;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --glass-bg: rgba(248, 251, 255, 0.58);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-highlight: rgba(255, 255, 255, 0.6);
+  --glass-text: rgba(20, 28, 42, 0.9);
+  --glass-text-dim: rgba(20, 28, 42, 0.55);
+  --accent: #315f91;
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: #08111c;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior: none;
+  background-image: radial-gradient(circle at 50% 0%, rgba(190, 220, 255, 0.1), transparent 35%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.025), transparent 45%);
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(28px) saturate(1.25);
+  -webkit-backdrop-filter: blur(28px) saturate(1.25);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), 0 18px 60px rgba(4, 8, 17, 0.18);
+}
+
+.glass-text {
+  color: var(--glass-text);
+}
+
+.glass-dim {
+  color: var(--glass-text-dim);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.text-glow {
+  text-shadow: 0 1px 16px rgba(0, 0, 0, 0.28), 0 0 3px rgba(0, 0, 0, 0.12);
+}
+
+.safe-top {
+  padding-top: max(1rem, env(safe-area-inset-top));
+}
+.safe-bottom {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+.bengali-display {
+  font-family: "Noto Serif Bengali", Georgia, serif;
+}
+
+.bengali-kicker {
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.alpana-mark {
+  position: relative;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 50%;
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.05), 0 0 22px rgba(180, 215, 255, 0.12);
+}
+
+.alpana-mark::before,
+.alpana-mark::after {
+  content: "";
+  position: absolute;
+  inset: 0.42rem;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 50%;
+}
+
+.alpana-mark::after {
+  inset: 0.82rem;
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(185, 216, 255, 0.55);
+}
+
+@keyframes monsoon-float {
+  0%,
+  100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(0, -8px, 0) rotate(3deg); }
+}
+
+.monsoon-float {
+  animation: monsoon-float 5s ease-in-out infinite;
+}
+
+@keyframes warm-pulse {
+  0%,
+  100% { box-shadow: 0 0 0 0 rgba(244, 201, 120, 0.12); }
+  50% { box-shadow: 0 0 0 9px rgba(244, 201, 120, 0); }
+}
+
+.warm-pulse {
+  animation: warm-pulse 2.8s ease-out infinite;
+}
+
+/* ---- scene animations ---- */
+
+@keyframes drift {
+  from {
+    transform: translate3d(-35vw, 0, 0);
+  }
+  to {
+    transform: translate3d(135vw, 0, 0);
+  }
+}
+
+.cloud-layer {
+  position: absolute;
+  inset: 0;
+  animation: drift linear infinite;
+  will-change: transform;
+}
+
+.cloud-layer.reverse {
+  animation-direction: reverse;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: var(--star-min, 0.15);
+  }
+  50% {
+    opacity: var(--star-max, 0.9);
+  }
+}
+
+.star {
+  position: absolute;
+  border-radius: 9999px;
+  background: #fff;
+  animation: twinkle ease-in-out infinite;
+  will-change: opacity;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+.sun-breathe {
+  animation: breathe 9s ease-in-out infinite;
+}
+
+@keyframes rays-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sun-rays {
+  animation: rays-spin 160s linear infinite;
+}
+
+@keyframes haze-shift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scaleY(1);
+  }
+  50% {
+    transform: translate3d(2vw, -1.5vh, 0) scaleY(1.06);
+  }
+}
+
+.heat-haze {
+  animation: haze-shift 11s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.pulse-ring {
+  animation: pulse-ring 2.4s ease-out infinite;
+}
+
+@keyframes wordmark-shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.wordmark {
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0.35) 20%,
+    rgba(255, 255, 255, 0.95) 45%,
+    rgba(255, 255, 255, 0.35) 70%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: wordmark-shimmer 3.2s linear infinite;
+}
+
+@keyframes droplet-slide {
+  0% {
+    transform: translate3d(0, 0, 0) scaleY(1);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(1.5vw, 108vh, 0) scaleY(1.5);
+    opacity: 0;
+  }
+}
+
+.droplet {
+  animation: droplet-slide linear infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+
+.skeleton {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 9999px;
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud-layer,
+  .star,
+  .sun-breathe,
+  .sun-rays,
+  .heat-haze,
+  .wordmark,
+  .pulse-ring,
+  .droplet {
+    animation: none !important;
+  }
+  .monsoon-float,
+  .warm-pulse {
+    animation: none !important;
+  }
+  .star {
+    opacity: 0.6;
+  }
+}
