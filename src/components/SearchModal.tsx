@@ -72,14 +72,14 @@ export default function SearchModal({ open, demo, geoAvailable, onClose, onSelec
       className="flex items-center"
     >
       <motion.button
-        whileTap={{ scale: 0.98, backgroundColor: "rgba(255,255,255,0.08)" }}
+        whileTap={{ scale: 0.98, backgroundColor: "rgba(20,20,28,0.06)" }}
         onClick={() => onSelectCity(city)}
-        className="flex-1 flex items-center gap-3.5 py-3.5 px-3 text-left rounded-2xl cursor-pointer min-w-0"
+        className="flex-1 flex items-center gap-3.5 py-3.5 px-3 text-left rounded-xl cursor-pointer min-w-0"
       >
-        <IconPin className="w-[18px] h-[18px] text-white/40 shrink-0" />
+        <IconPin className="w-[18px] h-[18px] text-[var(--ink)]/45 shrink-0" />
         <span className="flex flex-col min-w-0">
-          <span className="text-white text-[15px] font-medium truncate">{city.name}</span>
-          <span className="text-white/40 text-[12px] font-light truncate">
+          <span className="comic-body text-[var(--ink)] text-[15px] font-bold truncate">{city.name}</span>
+          <span className="comic-body text-[var(--ink)]/45 text-[12px] font-bold truncate">
             {sub ?? [city.state, city.country].filter(Boolean).join(", ")}
           </span>
         </span>
@@ -89,7 +89,7 @@ export default function SearchModal({ open, demo, geoAvailable, onClose, onSelec
         whileTap={{ scale: 0.8, rotate: -20 }}
         onClick={() => toggleSaved(city)}
         aria-label={isSaved(city) ? `Remove ${city.name} from saved` : `Save ${city.name}`}
-        className={`p-2.5 rounded-full cursor-pointer ${isSaved(city) ? "text-amber-300" : "text-white/25 hover:text-white/60"}`}
+        className={`p-2.5 rounded-full cursor-pointer ${isSaved(city) ? "text-[var(--comic-yellow)]" : "text-[var(--ink)]/25 hover:text-[var(--ink)]/55"}`}
       >
         <motion.span animate={{ scale: isSaved(city) ? 1 : 0.92 }} className="block">
           <IconStar className="w-[18px] h-[18px]" filled={isSaved(city)} />
@@ -100,16 +100,16 @@ export default function SearchModal({ open, demo, geoAvailable, onClose, onSelec
 
   return (
     <BottomSheet open={open} onClose={onClose} bare maxHeight="92vh">
-      <div className="sticky top-0 z-10 px-4 pt-1 pb-3 bg-[rgba(9,18,30,0.6)] backdrop-blur-xl">
-        <div className="flex items-center gap-3 px-4 h-12 rounded-full bg-white/[0.07] border border-white/10">
-          <IconSearch className="w-[18px] h-[18px] text-white/45 shrink-0" />
+      <div className="sticky top-0 z-10 px-4 pt-1 pb-3 bg-[var(--paper)] border-b-[3px] border-[var(--ink)]">
+        <div className="flex items-center gap-3 px-4 h-12 rounded-full bg-white border-[2.5px] border-[var(--ink)] comic-shadow-sm">
+          <IconSearch className="w-[18px] h-[18px] text-[var(--ink)]/50 shrink-0" />
           <input
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Escape" && onClose()}
             placeholder="Search any city…"
-            className="flex-1 bg-transparent outline-none text-white text-[16px] font-light placeholder:text-white/35"
+            className="comic-body flex-1 bg-transparent outline-none text-[var(--ink)] text-[16px] font-bold placeholder:text-[var(--ink)]/35"
           />
           <AnimatePresence>
             {query && (
@@ -120,7 +120,7 @@ export default function SearchModal({ open, demo, geoAvailable, onClose, onSelec
                 whileTap={{ scale: 0.85 }}
                 onClick={() => setQuery("")}
                 aria-label="Clear"
-                className="text-white/40 hover:text-white/80 p-1 cursor-pointer"
+                className="text-[var(--ink)]/45 hover:text-[var(--ink)] p-1 cursor-pointer"
               >
                 <IconClose className="w-4 h-4" />
               </motion.button>
@@ -138,12 +138,12 @@ export default function SearchModal({ open, demo, geoAvailable, onClose, onSelec
                 animate={{ opacity: 1, y: 0 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={onUseCurrentLocation}
-                className="w-full flex items-center gap-3.5 py-3.5 px-3 rounded-2xl bg-white/[0.05] text-left cursor-pointer mb-2"
+                className="w-full flex items-center gap-3.5 py-3.5 px-4 rounded-xl bg-[var(--comic-yellow)] border-[2.5px] border-[var(--ink)] comic-shadow-sm text-left cursor-pointer mb-3 comic-press"
               >
                 <span className="relative flex w-[18px] h-[18px] items-center justify-center shrink-0">
-                  <IconPin className="w-[18px] h-[18px] text-emerald-300" />
+                  <IconPin className="w-[18px] h-[18px] text-[var(--ink)]" />
                 </span>
-                <span className="text-white/90 text-[15px] font-medium">Use my current location</span>
+                <span className="comic-body text-[var(--ink)] text-[15px] font-bold">Use my current location</span>
               </motion.button>
             )}
             {recentSearches.length > 0 && (
@@ -159,19 +159,19 @@ export default function SearchModal({ open, demo, geoAvailable, onClose, onSelec
               </>
             )}
             {recentSearches.length === 0 && savedCities.length === 0 && !geoAvailable && (
-              <p className="text-white/35 text-[13px] font-light px-2 py-8 text-center">
+              <p className="comic-body text-[var(--ink)]/45 text-[13px] font-bold px-2 py-8 text-center">
                 Type the name of a city to begin.
               </p>
             )}
           </>
         ) : searching ? (
-          <div className="flex justify-center py-12 text-white/50">
+          <div className="flex justify-center py-12 text-[var(--ink)]/60">
             <Spinner />
           </div>
         ) : error ? (
-          <p className="text-red-200/70 text-[13px] font-light px-2 py-8 text-center">{error}</p>
+          <p className="comic-body text-[var(--comic-red)] text-[13px] font-bold px-2 py-8 text-center">{error}</p>
         ) : results.length === 0 ? (
-          <p className="text-white/40 text-[13px] font-light px-2 py-8 text-center">
+          <p className="comic-body text-[var(--ink)]/45 text-[13px] font-bold px-2 py-8 text-center">
             No cities found for “{query.trim()}”
           </p>
         ) : (
@@ -184,7 +184,7 @@ export default function SearchModal({ open, demo, geoAvailable, onClose, onSelec
 
 function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <p className="text-white/35 text-[11px] tracking-[0.16em] uppercase font-semibold px-3 pt-4 pb-1">
+    <p className="comic-title text-[var(--ink)]/55 text-[13px] tracking-[0.12em] uppercase px-3 pt-4 pb-1">
       {children}
     </p>
   );

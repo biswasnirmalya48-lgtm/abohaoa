@@ -35,7 +35,7 @@ export default function Dock({
           : { opacity: 1, y: 0, scale: 1, pointerEvents: "auto" }
       }
       transition={{ type: "spring", stiffness: 320, damping: 28, mass: 0.8 }}
-      className="fixed z-[35] left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2.5 py-2 rounded-full glass shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+      className="fixed z-[35] left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2.5 py-2 rounded-full panel"
       style={{ bottom: "calc(env(safe-area-inset-bottom) + 88px)" }}
     >
       <DockButton label="Search city" onClick={onSearch}>
@@ -45,7 +45,7 @@ export default function Dock({
       <DockButton label="Saved locations" onClick={onSaved}>
         <IconBookmark className="w-[19px] h-[19px]" />
         {savedCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-amber-300 text-[9px] font-bold text-slate-900 flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-[var(--comic-red)] border-2 border-[var(--ink)] text-[9px] font-bold text-white flex items-center justify-center">
             {savedCount}
           </span>
         )}
@@ -77,7 +77,7 @@ function DockButton({
       whileHover={{ scale: 1.06 }}
       onClick={onClick}
       aria-label={label}
-      className="relative w-11 h-11 rounded-full bg-white/[0.07] hover:bg-white/[0.13] text-white/85 flex items-center justify-center cursor-pointer transition-colors press-ring"
+      className="relative w-11 h-11 rounded-full bg-[var(--comic-yellow)] border-[2.5px] border-[var(--ink)] comic-shadow-sm text-[var(--ink)] flex items-center justify-center cursor-pointer comic-press"
     >
       {children}
     </motion.button>

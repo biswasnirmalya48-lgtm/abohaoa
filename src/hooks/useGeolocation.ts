@@ -29,27 +29,47 @@ async function getApproximateLocation(): Promise<Coordinates | null> {
   }
 }
 
+/** Great-circle distance in meters (haversine). */
+function distanceM(a: Coordinates, b: Coordinates): number {
+  const R = 6371000;
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(b.lat - a.lat);
+  const dLon = toRad(b.lon - a.lon);
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+/** Ignore GPS jitter smaller than this so the UI doesn't refetch constantly. */
+const MIN_MOVE_METERS = 150;
+
 export function useGeolocation() {
   const [state, setState] = useState<GeoState>({ status: "idle", coords: null });
   const watchId = useRef<number | null>(null);
+  const lastCoords = useRef<Coordinates | null>(null);
 
   const supported = typeof navigator !== "undefined" && "geolocation" in navigator;
+
+  /** Accept a position; background watch updates below MIN_MOVE_METERS are dropped. */
+  const commit = useCallback((c: Coordinates, force = false) => {
+    const prev = lastCoords.current;
+    if (!force && prev && distanceM(prev, c) < MIN_MOVE_METERS) return;
+    lastCoords.current = c;
+    setState({ status: "granted", coords: c });
+  }, []);
 
   const startWatching = useCallback(() => {
     if (!supported || watchId.current !== null) return;
     watchId.current = navigator.geolocation.watchPosition(
-      (pos) =>
-        setState({
-          status: "granted",
-          coords: { lat: pos.coords.latitude, lon: pos.coords.longitude },
-        }),
+      (pos) => commit({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
       () => {
         // keep previous coords if we already have them
         setState((s) => (s.coords ? s : { status: "error", coords: null }));
       },
       { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 },
     );
-  }, [supported]);
+  }, [supported, commit]);
 
   const request = useCallback((): Promise<Coordinates | null> => {
     return new Promise((resolve) => {
@@ -64,7 +84,7 @@ export function useGeolocation() {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const coords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-          setState({ status: "granted", coords });
+          commit(coords, true);
           startWatching();
           resolve(coords);
         },
@@ -99,10 +119,7 @@ export function useGeolocation() {
           navigator.geolocation.getCurrentPosition(
             (pos) => {
               if (cancelled) return;
-              setState({
-                status: "granted",
-                coords: { lat: pos.coords.latitude, lon: pos.coords.longitude },
-              });
+              commit({ lat: pos.coords.latitude, lon: pos.coords.longitude }, true);
               startWatching();
             },
             () => undefined,

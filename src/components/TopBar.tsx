@@ -36,7 +36,7 @@ export default function TopBar({
         onClick={onSearch}
         whileTap={{ scale: 0.9 }}
         aria-label="Change location"
-        className="relative shrink-0 w-11 h-11 rounded-full glass glass-text flex items-center justify-center cursor-pointer press-ring"
+        className="relative shrink-0 w-11 h-11 rounded-full panel comic-press flex items-center justify-center cursor-pointer text-[var(--ink)]"
       >
         <motion.span
           animate={
@@ -49,10 +49,10 @@ export default function TopBar({
           transition={{ duration: locating ? 1 : 2.6, repeat: Infinity, ease: "easeInOut" }}
           className="flex items-center justify-center"
         >
-          <IconPin className={`w-[19px] h-[19px] ${isCurrentLocation ? "text-emerald-200" : "text-white/85"}`} />
+          <IconPin className={`w-[19px] h-[19px] ${isCurrentLocation ? "text-[var(--comic-red)]" : ""}`} />
         </motion.span>
         {isCurrentLocation && (
-          <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-300 border-2 border-[#0a1020]" />
+          <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[var(--comic-blue)] border-2 border-[var(--ink)]" />
         )}
       </motion.button>
 
@@ -69,20 +69,21 @@ export default function TopBar({
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              className="text-white text-[19px] md:text-2xl font-semibold tracking-tight text-glow truncate"
+              className="font-display text-white text-[24px] md:text-3xl leading-none truncate"
+              style={{ WebkitTextStroke: "3px var(--ink)", paintOrder: "stroke fill", textShadow: "3px 3px 0 var(--ink)" }}
             >
               {placeName}
             </motion.h1>
           </AnimatePresence>
           <motion.span
             aria-hidden="true"
-            className="text-white/35 group-hover:text-white/70 transition-colors shrink-0"
+            className="text-white/70 group-hover:text-white transition-colors shrink-0"
           >
-            <IconSearch className="w-3.5 h-3.5" />
+            <IconSearch className="w-4 h-4" />
           </motion.span>
         </div>
 
-        <div className="flex items-center gap-2 mt-1 min-h-[16px]">
+        <div className="flex items-center gap-2 mt-1.5 min-h-[18px]">
           <AnimatePresence initial={false}>
             {locating ? (
               <motion.span
@@ -90,7 +91,7 @@ export default function TopBar({
                 initial={{ opacity: 0, x: -6 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0 }}
-                className="text-[11px] font-medium tracking-wide text-emerald-200/80"
+                className="sticker comic-body text-[10px] px-2 py-[1px] font-bold"
               >
                 Finding you…
               </motion.span>
@@ -100,7 +101,7 @@ export default function TopBar({
                 initial={{ opacity: 0, x: -6 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0 }}
-                className="text-[11px] font-medium tracking-wide text-amber-200/80"
+                className="sticker comic-body text-[10px] px-2 py-[1px] font-bold bg-[var(--comic-yellow)]"
               >
                 Offline{lastUpdated ? ` · ${fmtTime(lastUpdated)}` : ""}
               </motion.span>
@@ -110,11 +111,11 @@ export default function TopBar({
                 initial={{ opacity: 0, x: -6 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0 }}
-                className="flex items-center gap-1.5 text-[11px] font-medium tracking-wide text-white/45"
+                className="sticker comic-body text-[10px] px-2 py-[1px] font-bold flex items-center gap-1.5"
               >
                 <span className="relative flex w-1.5 h-1.5">
-                  <span className="absolute inset-0 rounded-full bg-emerald-300/90" />
-                  <span className="absolute inset-0 rounded-full bg-emerald-300/60 pulse-ring" />
+                  <span className="absolute inset-0 rounded-full bg-[var(--comic-red)]" />
+                  <span className="absolute inset-0 rounded-full bg-[var(--comic-red)]/60 pulse-ring" />
                 </span>
                 Live
               </motion.span>
@@ -124,9 +125,9 @@ export default function TopBar({
             <motion.span
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-[9px] tracking-[0.16em] uppercase text-white/50 border border-white/20 rounded-full px-1.5 py-[1px]"
+              className="sticker comic-body text-[9px] px-2 py-[1px] font-bold bg-[var(--comic-blue)]"
             >
-              Demo
+              DEMO
             </motion.span>
           )}
         </div>

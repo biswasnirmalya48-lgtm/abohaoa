@@ -6,7 +6,7 @@ import { isDemoMode, reverseGeocode } from "../services/weatherApi";
 import { useWeatherData } from "../hooks/useWeatherData";
 import { usePageVisible, usePrefersReducedMotion, useOnlineStatus } from "../hooks/useEnvironment";
 import { usePullToRefresh } from "../hooks/usePullToRefresh";
-import { deriveScene } from "../lib/weatherScene";
+import { deriveScene, type SceneKind } from "../lib/weatherScene";
 import type { GeoStatus } from "../hooks/useGeolocation";
 import WeatherScene from "./scenes/WeatherScene";
 import TopBar from "./TopBar";
@@ -35,6 +35,18 @@ interface Page {
   isCurrent: boolean;
   city?: City;
 }
+
+const SFX: Record<SceneKind, string> = {
+  clear: "BLAZE!",
+  partly: "BREEZE!",
+  cloudy: "PLOOF!",
+  overcast: "GLOOM!",
+  rain: "SPLASH!",
+  "heavy-rain": "POUR!",
+  thunder: "KRA-KOOM!",
+  snow: "BRRR!",
+  fog: "WHOOSH!",
+};
 
 export default function MainScreen({ geoStatus, geoCoords, onRequestLocation, initialSearchOpen }: Props) {
   const settings = useAppStore((s) => s.settings);
@@ -183,11 +195,14 @@ export default function MainScreen({ geoStatus, geoCoords, onRequestLocation, in
   }, [geoCoords, geoStatus, onRequestLocation, setActive]);
 
   const scene = data ? deriveScene(data) : null;
+  const sfx = scene ? SFX[scene.kind] : "ABOHAOA!";
   const noLocationPrompt =
     active.type === "current" && !geoReady && !loading && geoStatus !== "locating";
 
   return (
     <div className="relative h-dvh w-full overflow-hidden">
+      {/* comic halftone texture over the whole scene */}
+      <div className="pointer-events-none absolute inset-0 z-[2] halftone-light opacity-40 mix-blend-overlay" aria-hidden="true" />
       <div className="pointer-events-none absolute inset-0 z-[1] opacity-30 mix-blend-soft-light" aria-hidden="true">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_34%,rgba(255,240,202,0.16),transparent_34%)]" />
         <div className="absolute -left-16 top-1/3 h-48 w-48 rounded-full border border-amber-100/20 monsoon-float" />
@@ -244,6 +259,7 @@ export default function MainScreen({ geoStatus, geoCoords, onRequestLocation, in
               pageKey={activeKey}
               pageCount={pages.length}
               activeIndex={activeIndex}
+              sfx={sfx}
             />
             <div className="pb-[calc(env(safe-area-inset-bottom)+164px)]">
               <HourlyStrip data={data} tempUnit={settings.tempUnit} />
@@ -282,22 +298,22 @@ export default function MainScreen({ geoStatus, geoCoords, onRequestLocation, in
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-40 flex items-center justify-center px-8"
           >
-            <div className="glass rounded-3xl px-8 py-10 max-w-sm w-full flex flex-col items-center text-center">
-              <div className="w-14 h-14 rounded-full bg-white/[0.07] flex items-center justify-center mb-6 text-white/70">
+            <div className="panel comic-body px-8 py-10 max-w-sm w-full flex flex-col items-center text-center">
+              <div className="w-14 h-14 rounded-full bg-[var(--comic-blue)] border-[3px] border-[var(--ink)] comic-shadow-sm flex items-center justify-center mb-6 text-white">
                 <IconPin className="w-6 h-6" />
               </div>
-              <h2 className="text-white text-lg font-light tracking-tight mb-2.5">
-                No location yet
+              <h2 className="comic-title text-[var(--ink)] text-2xl tracking-wide mb-2.5">
+                NO LOCATION YET
               </h2>
-              <p className="text-white/50 text-[13.5px] font-light leading-relaxed mb-8">
+              <p className="comic-body text-[var(--ink)]/55 text-[13.5px] font-bold leading-relaxed mb-8">
                 Allow location access for weather where you are, or pick any city in the world.
               </p>
-              <div className="flex flex-col gap-2.5 w-full">
+              <div className="flex flex-col gap-3 w-full">
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.96 }}
                   onClick={() => void onUseCurrentLocation()}
-                  className="h-11 rounded-full bg-white/90 text-slate-900 text-[14px] font-normal flex items-center justify-center gap-2 cursor-pointer"
+                  className="comic-body comic-press h-11 rounded-full bg-[var(--comic-yellow)] border-[3px] border-[var(--ink)] comic-shadow text-[var(--ink)] text-[14px] font-bold flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <IconPin className="w-4 h-4" /> Use my location
                 </motion.button>
@@ -305,7 +321,7 @@ export default function MainScreen({ geoStatus, geoCoords, onRequestLocation, in
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.96 }}
                   onClick={openSearch}
-                  className="h-11 rounded-full glass glass-text text-[14px] font-light flex items-center justify-center gap-2 cursor-pointer"
+                  className="comic-body comic-press h-11 rounded-full bg-white border-[3px] border-[var(--ink)] comic-shadow-sm text-[var(--ink)]/75 text-[14px] font-bold flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <IconSearch className="w-4 h-4" /> Search for a city
                 </motion.button>
@@ -352,6 +368,9 @@ export default function MainScreen({ geoStatus, geoCoords, onRequestLocation, in
         />
         <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       </div>
+
+      {/* comic panel frame */}
+      <div className="pointer-events-none fixed inset-0 z-[60] comic-frame" aria-hidden="true" />
     </div>
   );
 }

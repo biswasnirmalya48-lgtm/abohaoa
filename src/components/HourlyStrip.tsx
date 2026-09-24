@@ -20,7 +20,7 @@ export default function HourlyStrip({ data, tempUnit }: Props) {
       transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
       className="relative z-20 mx-3 md:mx-auto md:max-w-3xl"
     >
-      <div className="glass rounded-[26px] px-1.5 py-3">
+      <div className="panel px-1.5 py-3">
         <div className="flex gap-0.5 overflow-x-auto no-scrollbar snap-x-mandatory px-1">
           {hours.map((h, i) => {
             const now = i === 0;
@@ -32,13 +32,15 @@ export default function HourlyStrip({ data, tempUnit }: Props) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.26 + i * 0.02, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ y: -3 }}
-                className={`relative flex flex-col items-center gap-1.5 min-w-[60px] py-2 rounded-2xl flex-shrink-0 snap-start ${
-                  now ? "bg-white/[0.1]" : ""
+                className={`comic-body relative flex flex-col items-center gap-1.5 min-w-[60px] py-2 rounded-xl flex-shrink-0 snap-start border-2 ${
+                  now
+                    ? "bg-[var(--comic-yellow)] border-[var(--ink)]"
+                    : "border-transparent"
                 }`}
               >
                 <span
-                  className={`text-[11px] font-medium tracking-wide ${
-                    now ? "text-white" : "text-white/50"
+                  className={`text-[11px] font-bold tracking-wide ${
+                    now ? "text-[var(--ink)]" : "text-[var(--ink)]/55"
                   }`}
                 >
                   {now ? "Now" : formatHour(h.dt, timezoneOffset)}
@@ -47,14 +49,14 @@ export default function HourlyStrip({ data, tempUnit }: Props) {
                   animate={now ? { scale: [1, 1.12, 1] } : undefined}
                   transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <WeatherIcon icon={h.weather.icon} className="w-[24px] h-[24px] text-white/90" />
+                  <WeatherIcon icon={h.weather.icon} className="w-[24px] h-[24px] text-[var(--ink)]" />
                 </motion.span>
-                <span className="text-[10px] font-medium text-sky-200 h-3.5 tabular-nums">
+                <span className="text-[10px] font-bold text-[var(--comic-red)] h-3.5 tabular-nums">
                   {showPop ? `${Math.round(h.pop * 100)}%` : ""}
                 </span>
                 <span
-                  className={`text-[14px] font-semibold tabular-nums ${
-                    now ? "text-white" : "text-white/90"
+                  className={`text-[15px] font-bold tabular-nums ${
+                    now ? "text-[var(--ink)]" : "text-[var(--ink)]/85"
                   }`}
                 >
                   {formatTemp(h.temp, tempUnit)}

@@ -1,8 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Bangers&family=Comic+Neue:wght@400;700&display=swap");
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bangers", "Comic Neue", cursive;
+  --font-comic: "Comic Neue", "Manrope", sans-serif;
 }
 
 :root {
@@ -222,6 +224,123 @@ body {
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
   animation: sheen 3.4s ease-in-out infinite;
   pointer-events: none;
+}
+
+/* ---------- comic book design system ---------- */
+
+:root {
+  --ink: #14141c;
+  --paper: #fff8e7;
+  --comic-yellow: #ffd23f;
+  --comic-red: #ff5148;
+  --comic-blue: #2ec4f1;
+}
+
+.panel {
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.panel-dark {
+  background: #20202c;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.6);
+}
+
+.ink-border {
+  border: 3px solid var(--ink);
+}
+
+.comic-shadow {
+  box-shadow: 5px 5px 0 var(--ink);
+}
+.comic-shadow-sm {
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.halftone {
+  background-image: radial-gradient(circle, rgba(20, 20, 28, 0.16) 1.3px, transparent 1.4px);
+  background-size: 9px 9px;
+}
+.halftone-light {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.2) 1.3px, transparent 1.4px);
+  background-size: 9px 9px;
+}
+
+.outline-text {
+  font-family: var(--font-display);
+  color: var(--comic-yellow);
+  -webkit-text-stroke: 2.5px var(--ink);
+  paint-order: stroke fill;
+  text-shadow: 5px 5px 0 var(--ink);
+  letter-spacing: 0.02em;
+}
+
+.comic-title {
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  color: var(--ink);
+}
+
+.comic-body {
+  font-family: var(--font-comic);
+}
+
+.sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #fff;
+  border: 2.5px solid var(--ink);
+  border-radius: 9999px;
+  box-shadow: 3px 3px 0 var(--ink);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.comic-press {
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.comic-press:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.speech {
+  position: relative;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  box-shadow: 4px 4px 0 var(--ink);
+  color: var(--ink);
+}
+.speech::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -14px;
+  margin-left: -9px;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 14px solid var(--ink);
+}
+.speech::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  margin-left: -6px;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 10px solid #fff;
+  z-index: 1;
+}
+
+.comic-frame {
+  box-shadow: inset 0 0 0 5px var(--ink);
 }
 
 /* ---- scene animations ---- */

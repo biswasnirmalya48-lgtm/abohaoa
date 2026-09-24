@@ -23,20 +23,20 @@ function Segment<T extends string>({
   idKey: string;
 }) {
   return (
-    <div className="flex rounded-full bg-white/[0.07] p-1 w-full">
+    <div className="flex rounded-full bg-white border-[2.5px] border-[var(--ink)] comic-shadow-sm p-1 w-full">
       {options.map((o) => (
         <motion.button
           key={o.value}
           whileTap={{ scale: 0.96 }}
           onClick={() => onChange(o.value)}
-          className={`relative flex-1 py-2.5 rounded-full text-[13px] font-medium transition-colors cursor-pointer ${
-            value === o.value ? "text-slate-900" : "text-white/60 hover:text-white/85"
+          className={`comic-body relative flex-1 py-2.5 rounded-full text-[13px] font-bold transition-colors cursor-pointer ${
+            value === o.value ? "text-[var(--ink)]" : "text-[var(--ink)]/45 hover:text-[var(--ink)]/75"
           }`}
         >
           {value === o.value && (
             <motion.span
               layoutId={`seg-${idKey}`}
-              className="absolute inset-0 rounded-full bg-white/90"
+              className="absolute inset-0 rounded-full bg-[var(--comic-yellow)] border-[2px] border-[var(--ink)]"
               transition={{ type: "spring", stiffness: 420, damping: 32 }}
             />
           )}
@@ -53,9 +53,9 @@ function Row({ label, children, index }: { label: string; children: ReactNode; i
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.05 + index * 0.05, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="py-4 border-b border-white/[0.07]"
+      className="py-4 border-b-2 border-dashed border-[var(--ink)]/15"
     >
-      <p className="text-white/45 text-[11px] tracking-[0.16em] uppercase font-semibold mb-3 px-1">{label}</p>
+      <p className="comic-title text-[var(--ink)]/70 text-[14px] tracking-[0.1em] uppercase mb-3 px-1">{label}</p>
       {children}
     </motion.div>
   );
@@ -106,7 +106,7 @@ export default function SettingsPanel({ open, onClose }: Props) {
             ]}
             onChange={(v) => setSettings({ animation: v })}
           />
-          <p className="text-white/35 text-[12px] font-light mt-2.5 px-1 leading-relaxed">
+          <p className="comic-body text-[var(--ink)]/45 text-[12px] font-bold mt-2.5 px-1 leading-relaxed">
             Controls particle density and scene motion. Abohaoa always respects your system's
             reduced-motion preference.
           </p>
@@ -123,7 +123,7 @@ export default function SettingsPanel({ open, onClose }: Props) {
             ]}
             onChange={(v) => setSettings({ theme: v })}
           />
-          <p className="text-white/35 text-[12px] font-light mt-2.5 px-1">
+          <p className="comic-body text-[var(--ink)]/45 text-[12px] font-bold mt-2.5 px-1">
             Affects panels and surfaces. The sky always follows the real weather.
           </p>
         </Row>
@@ -135,21 +135,21 @@ export default function SettingsPanel({ open, onClose }: Props) {
             className="w-full flex items-center justify-between px-1 cursor-pointer group"
           >
             <span className="flex flex-col text-left">
-              <span className="text-white/85 text-[14px] font-medium">{demoOn ? "On" : "Off"}</span>
-              <span className="text-white/35 text-[12px] font-light mt-0.5">
+              <span className="comic-body text-[var(--ink)] text-[14px] font-bold">{demoOn ? "On" : "Off"}</span>
+              <span className="comic-body text-[var(--ink)]/45 text-[12px] font-bold mt-0.5">
                 {hasApiKey
                   ? "Use simulated weather data"
                   : "No API key found — demo data is active."}
               </span>
             </span>
             <span
-              className={`w-12 h-[28px] rounded-full p-[3px] transition-colors duration-300 shrink-0 ${
-                demoOn ? "bg-emerald-400/80" : "bg-white/15"
+              className={`w-12 h-[28px] rounded-full p-[3px] border-[2.5px] border-[var(--ink)] transition-colors duration-300 shrink-0 ${
+                demoOn ? "bg-[var(--comic-blue)]" : "bg-[var(--ink)]/15"
               }`}
             >
               <motion.span
-                className="block w-[22px] h-[22px] rounded-full bg-white shadow"
-                animate={{ x: demoOn ? 22 : 0 }}
+                className="block w-[22px] h-[22px] rounded-full bg-white border-2 border-[var(--ink)]"
+                animate={{ x: demoOn ? 20 : 0 }}
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
               />
             </span>
@@ -175,7 +175,7 @@ export default function SettingsPanel({ open, onClose }: Props) {
               />
             ))}
             {savedCities.length === 0 && (
-              <p className="text-white/35 text-[12px] font-light px-1 pt-1">
+              <p className="comic-body text-[var(--ink)]/45 text-[12px] font-bold px-1 pt-1">
                 Save cities from search to choose a default.
               </p>
             )}
@@ -183,10 +183,10 @@ export default function SettingsPanel({ open, onClose }: Props) {
         </Row>
 
         <div className="pt-9 pb-3 flex flex-col items-center gap-2">
-          <span className="wordmark text-[15px] tracking-[0.4em] font-light pl-[0.4em] select-none">
+          <span className="comic-title text-[var(--ink)] text-[22px] tracking-[0.12em] select-none">
             ABOHAOA
           </span>
-          <span className="text-white/25 text-[11px] font-light tracking-wide">
+          <span className="comic-body text-[var(--ink)]/45 text-[11px] font-bold tracking-wide">
             A living weather window · v2.0
           </span>
         </div>
@@ -200,10 +200,10 @@ function DefaultRow({ label, selected, onClick }: { label: string; selected: boo
     <motion.button
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-white/[0.06] transition-colors text-left cursor-pointer"
+      className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-[var(--ink)]/[0.05] transition-colors text-left cursor-pointer"
     >
-      <span className={`text-[14px] font-light ${selected ? "text-white font-medium" : "text-white/55"}`}>{label}</span>
-      {selected && <IconCheck className="w-4 h-4 text-emerald-300" />}
+      <span className={`comic-body text-[14px] font-bold ${selected ? "text-[var(--ink)]" : "text-[var(--ink)]/55"}`}>{label}</span>
+      {selected && <IconCheck className="w-4 h-4 text-[var(--comic-red)]" />}
     </motion.button>
   );
 }

@@ -17,12 +17,14 @@ interface Props {
   pageKey: string;
   pageCount: number;
   activeIndex: number;
+  /** comic onomatopoeia for the current scene, e.g. "SPLASH!" */
+  sfx: string;
 }
 
 const variants = {
-  enter: (dir: number) => ({ x: dir > 0 ? 120 : -120, opacity: 0, filter: "blur(8px)", scale: 0.94 }),
-  center: { x: 0, opacity: 1, filter: "blur(0px)", scale: 1 },
-  exit: (dir: number) => ({ x: dir > 0 ? -120 : 120, opacity: 0, filter: "blur(8px)", scale: 0.94 }),
+  enter: (dir: number) => ({ x: dir > 0 ? 120 : -120, opacity: 0, rotate: dir > 0 ? 4 : -4 }),
+  center: { x: 0, opacity: 1, rotate: 0 },
+  exit: (dir: number) => ({ x: dir > 0 ? -120 : 120, opacity: 0, rotate: dir > 0 ? -4 : 4 }),
 };
 
 export default function Hero({
@@ -37,6 +39,7 @@ export default function Hero({
   pageKey,
   pageCount,
   activeIndex,
+  sfx,
 }: Props) {
   const { current, daily } = data;
   const today = daily[0];
@@ -49,17 +52,30 @@ export default function Hero({
   };
 
   return (
-    <div className="relative flex-1 flex flex-col items-center justify-center select-none min-h-0">
+    <div className="relative flex-1 flex flex-col items-center justify-center select-none min-h-0 px-4">
+      {/* comic onomatopoeia burst */}
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          key={sfx}
+          initial={{ scale: 0, rotate: -20, opacity: 0 }}
+          animate={{ scale: 1, rotate: -8, opacity: 1 }}
+          exit={{ scale: 0, rotate: 12, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 320, damping: 16 }}
+          className="absolute top-1 right-2 z-10 sticker comic-title text-[15px] px-3 py-1 bg-[var(--comic-yellow)]"
+        >
+          {sfx}
+        </motion.div>
+      </AnimatePresence>
+
       {/* desktop arrows */}
       {canPrev && (
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          whileHover={{ scale: 1.12 }}
           whileTap={{ scale: 0.9 }}
           onClick={() => onArrow(-1)}
           aria-label="Previous city"
-          className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full glass glass-text items-center justify-center cursor-pointer z-10"
+          className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full panel comic-press items-center justify-center cursor-pointer z-10 text-[var(--ink)]"
         >
           <IconChevronLeft />
         </motion.button>
@@ -68,11 +84,10 @@ export default function Hero({
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          whileHover={{ scale: 1.12 }}
           whileTap={{ scale: 0.9 }}
           onClick={() => onArrow(1)}
           aria-label="Next city"
-          className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full glass glass-text items-center justify-center cursor-pointer z-10"
+          className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full panel comic-press items-center justify-center cursor-pointer z-10 text-[var(--ink)]"
         >
           <IconChevronRight />
         </motion.button>
@@ -84,7 +99,7 @@ export default function Hero({
         dragElastic={0.2}
         dragConstraints={{ left: 0, right: 0 }}
         onDragEnd={handleDragEnd}
-        className="cursor-grab active:cursor-grabbing touch-pan-y px-6 flex flex-col items-center"
+        className="cursor-grab active:cursor-grabbing touch-pan-y flex flex-col items-center"
       >
         <AnimatePresence mode="popLayout" custom={direction} initial={false}>
           <motion.div
@@ -94,64 +109,47 @@ export default function Hero({
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col items-center text-center text-white"
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col items-center text-center"
           >
-            {/* breathing glow behind the number */}
-            <div className="relative flex items-center justify-center">
-              <div
-                aria-hidden="true"
-                className="absolute w-[240px] h-[240px] md:w-[320px] md:h-[320px] rounded-full glow-breathe"
-                style={{
-                  background:
-                    "radial-gradient(circle, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 42%, transparent 70%)",
-                }}
-              />
-              <motion.div
-                whileTap={{ scale: 0.93 }}
-                transition={{ type: "spring", stiffness: 400, damping: 18 }}
-                className="relative flex items-start cursor-pointer"
-              >
-                <AnimatedNumber
-                  value={celsiusTo(current.temp, tempUnit)}
-                  className="temp-shine text-[92px] md:text-[150px] leading-none font-extralight tracking-[-0.06em] text-glow tabular-nums"
-                />
-                <motion.span
-                  initial={{ opacity: 0, y: -6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-3xl md:text-5xl font-extralight mt-3 md:mt-5 text-white/75"
-                >
-                  {tempUnit === "c" ? "°C" : "°F"}
-                </motion.span>
-              </motion.div>
-            </div>
-
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.5 }}
-              className="mt-4 text-[19px] md:text-2xl font-medium tracking-wide text-white/95 text-glow"
+            <motion.div
+              whileTap={{ scale: 0.94 }}
+              transition={{ type: "spring", stiffness: 400, damping: 16 }}
+              className="relative flex items-start cursor-pointer"
             >
-              {description}
-            </motion.p>
+              <AnimatedNumber
+                value={celsiusTo(current.temp, tempUnit)}
+                className="outline-text text-[96px] md:text-[150px] leading-[0.95] tabular-nums"
+              />
+              <span className="outline-text text-3xl md:text-5xl mt-2 md:mt-4">
+                {tempUnit === "c" ? "°C" : "°F"}
+              </span>
+            </motion.div>
+
+            {/* condition as a speech bubble */}
+            <motion.div
+              initial={{ opacity: 0, y: 12, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: 0.1, type: "spring", stiffness: 300, damping: 20 }}
+              className="speech comic-body font-bold text-[17px] md:text-xl px-5 py-2 mt-5 mb-4"
+            >
+              {description}!
+            </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.18, duration: 0.5 }}
-              className="mt-3 flex items-center gap-2.5 px-4 py-1.5 rounded-full glass-soft"
+              transition={{ delay: 0.18, duration: 0.4 }}
+              className="sticker comic-body text-[13px] px-4 py-1.5"
             >
-              <span className="text-[13.5px] font-light text-white/70">
-                Feels {formatTemp(current.feelsLike, tempUnit)}
-              </span>
+              <span>Feels {formatTemp(current.feelsLike, tempUnit)}</span>
               {today && (
                 <>
-                  <span className="w-px h-3.5 bg-white/20" />
-                  <span className="text-[13.5px] font-light text-white/70 tabular-nums">
-                    <span className="text-white/90">{formatTemp(today.max, tempUnit)}</span>
-                    <span className="mx-1 text-white/30">/</span>
-                    {formatTemp(today.min, tempUnit)}
+                  <span className="w-px h-3.5 bg-[var(--ink)]/30" />
+                  <span className="tabular-nums">
+                    <span className="text-[var(--comic-red)]">{formatTemp(today.max, tempUnit)}</span>
+                    <span className="mx-1 opacity-40">/</span>
+                    <span className="text-[var(--comic-blue)]">{formatTemp(today.min, tempUnit)}</span>
                   </span>
                 </>
               )}
@@ -166,7 +164,7 @@ export default function Hero({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="flex items-center gap-1.5 mt-5"
+          className="flex items-center gap-2 mt-5"
         >
           {Array.from({ length: pageCount }).map((_, i) => (
             <motion.button
@@ -178,11 +176,11 @@ export default function Hero({
               <motion.span
                 layout
                 animate={{
-                  width: i === activeIndex ? 20 : 6,
-                  opacity: i === activeIndex ? 1 : 0.4,
+                  width: i === activeIndex ? 22 : 10,
+                  backgroundColor: i === activeIndex ? "var(--comic-yellow)" : "#ffffff",
                 }}
                 transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                className="block h-1.5 rounded-full bg-white"
+                className="block h-3 rounded-full border-2 border-[var(--ink)]"
               />
             </motion.button>
           ))}
@@ -197,7 +195,7 @@ export function HeroSkeleton() {
     <div className="flex-1 flex items-center justify-center">
       <div className="flex flex-col items-center gap-6">
         <div className="skeleton w-52 h-28 md:w-72 md:h-36" />
-        <div className="skeleton w-36 h-5" />
+        <div className="skeleton w-36 h-6" />
         <div className="skeleton w-56 h-8" />
       </div>
     </div>

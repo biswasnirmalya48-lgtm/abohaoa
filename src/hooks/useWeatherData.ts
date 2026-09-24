@@ -72,8 +72,11 @@ export function useWeatherData(
     [],
   );
 
-  const lat = coords?.lat ?? null;
-  const lon = coords?.lon ?? null;
+  const rawLat = coords?.lat ?? null;
+  const rawLon = coords?.lon ?? null;
+  // Quantize to ~1.1 km so GPS jitter never triggers a refetch loop.
+  const lat = rawLat === null ? null : Math.round(rawLat * 100) / 100;
+  const lon = rawLon === null ? null : Math.round(rawLon * 100) / 100;
 
   useEffect(() => {
     if (lat === null || lon === null) return;

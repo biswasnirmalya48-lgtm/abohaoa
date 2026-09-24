@@ -42,7 +42,7 @@ export default function BottomSheet({
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="absolute inset-0 bg-black/50 backdrop-blur-[6px]"
+            className="absolute inset-0 bg-[var(--ink)]/55 backdrop-blur-[6px]"
             onClick={onClose}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -57,7 +57,7 @@ export default function BottomSheet({
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", stiffness: 340, damping: 34, mass: 0.9 }}
-            className="relative w-full md:max-w-lg glass rounded-t-[28px] flex flex-col overflow-hidden shadow-[0_-10px_60px_rgba(0,0,0,0.45)]"
+            className="relative w-full md:max-w-lg bg-[var(--paper)] border-[3px] border-[var(--ink)] rounded-t-[28px] flex flex-col overflow-hidden comic-shadow"
             style={{ maxHeight, height: "fit-content" }}
           >
             {/* drag handle — the only draggable region */}
@@ -68,17 +68,17 @@ export default function BottomSheet({
               onDragEnd={onHandleDragEnd}
               className="shrink-0 pt-3 pb-1 touch-none cursor-grab active:cursor-grabbing flex justify-center"
             >
-              <div className="grabber" />
+              <div className="grabber !bg-[var(--ink)]/40" />
             </motion.div>
 
             {!bare && (
               <div className="shrink-0 flex items-center justify-between px-6 pt-1 pb-3">
                 <div className="min-w-0">
                   {title && (
-                    <h2 className="text-white text-[17px] font-semibold tracking-tight truncate">{title}</h2>
+                    <h2 className="comic-title text-[var(--ink)] text-[20px] tracking-wide truncate">{title}</h2>
                   )}
                   {subtitle && (
-                    <p className="text-white/45 text-[12px] font-light mt-0.5 truncate">{subtitle}</p>
+                    <p className="comic-body text-[var(--ink)]/50 text-[12px] font-bold mt-0.5 truncate">{subtitle}</p>
                   )}
                 </div>
                 <motion.button
@@ -86,7 +86,7 @@ export default function BottomSheet({
                   whileTap={{ scale: 0.88, rotate: 90 }}
                   onClick={onClose}
                   aria-label="Close"
-                  className="w-9 h-9 rounded-full bg-white/10 text-white/70 hover:text-white flex items-center justify-center cursor-pointer shrink-0"
+                  className="w-9 h-9 rounded-full bg-[var(--comic-red)] border-[2.5px] border-[var(--ink)] comic-shadow-sm text-white flex items-center justify-center cursor-pointer shrink-0 comic-press"
                 >
                   <IconClose className="w-[17px] h-[17px]" />
                 </motion.button>

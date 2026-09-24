@@ -74,7 +74,7 @@ export default function ForecastPanel({
       animate={{ y: expanded ? 0 : sheetOffset }}
       transition={{ type: "spring", stiffness: 300, damping: 32, mass: 0.9 }}
     >
-      <div className="h-full w-full md:max-w-lg glass rounded-t-[28px] flex flex-col overflow-hidden shadow-[0_-8px_50px_rgba(0,0,0,0.35)]">
+      <div className="h-full w-full md:max-w-lg bg-[var(--paper)] border-[3px] border-[var(--ink)] rounded-t-[28px] flex flex-col overflow-hidden comic-shadow">
         {/* grabber + header (drag or tap to toggle) */}
         <motion.div
           drag="y"
@@ -85,24 +85,24 @@ export default function ForecastPanel({
           className="shrink-0 pt-2.5 pb-2 cursor-grab active:cursor-grabbing touch-none select-none"
         >
           <motion.div
-            animate={{ width: expanded ? 40 : 34, opacity: expanded ? 0.5 : 0.35 }}
-            className="h-1 rounded-full bg-white mx-auto mb-2.5"
+            animate={{ width: expanded ? 40 : 34, opacity: expanded ? 0.6 : 0.4 }}
+            className="h-1.5 rounded-full bg-[var(--ink)] mx-auto mb-2.5"
           />
           <div className="flex items-center justify-between px-5">
-            <span className="text-white/90 text-[13.5px] font-semibold tracking-wide flex items-center gap-2">
+            <span className="comic-title text-[var(--ink)] text-[16px] tracking-wide flex items-center gap-2">
               <motion.span
                 animate={{ rotate: expanded ? 180 : 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 22 }}
-                className="text-white/50 flex"
+                className="text-[var(--ink)]/60 flex"
               >
                 <IconChevronUp className="w-4 h-4" />
               </motion.span>
-              7-Day Forecast
+              7-DAY FORECAST
             </span>
-            <span className="text-white/50 text-[12px] font-light tabular-nums flex items-center gap-2">
+            <span className="comic-body text-[var(--ink)]/60 text-[12px] font-bold tabular-nums flex items-center gap-2">
               {today && (
                 <>
-                  <WeatherIcon icon={today.weather.icon} className="w-4 h-4 text-white/70" />
+                  <WeatherIcon icon={today.weather.icon} className="w-4 h-4 text-[var(--ink)]" />
                   {formatTemp(today.min, tempUnit)} – {formatTemp(today.max, tempUnit)}
                 </>
               )}
@@ -123,30 +123,30 @@ export default function ForecastPanel({
                   initial={{ opacity: 0, x: -12 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: expanded ? 0.05 + i * 0.045 : 0, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  whileHover={{ backgroundColor: "rgba(255,255,255,0.04)" }}
-                  className="grid grid-cols-[64px_26px_40px_1fr] items-center gap-2 py-2.5 px-1 rounded-xl border-b border-white/[0.06] last:border-none"
+                  whileHover={{ backgroundColor: "rgba(20,20,28,0.04)" }}
+                  className="grid grid-cols-[64px_26px_40px_1fr] items-center gap-2 py-2.5 px-1 rounded-xl border-b-2 border-dashed border-[var(--ink)]/15 last:border-none"
                 >
-                  <span className="text-white/85 text-[13.5px] font-medium truncate">
+                  <span className="comic-body text-[var(--ink)] text-[13.5px] font-bold truncate">
                     {formatDayName(d.dt, timezoneOffset, current.dt)}
                   </span>
-                  <WeatherIcon icon={d.weather.icon} className="w-[22px] h-[22px] text-white/90" />
-                  <span className="text-[11px] font-medium text-sky-200/85 tabular-nums">
+                  <WeatherIcon icon={d.weather.icon} className="w-[22px] h-[22px] text-[var(--ink)]" />
+                  <span className="comic-body text-[11px] font-bold text-[var(--comic-red)] tabular-nums">
                     {d.pop >= 0.15 ? `${Math.round(d.pop * 100)}%` : ""}
                   </span>
                   <div className="flex items-center gap-2.5">
-                    <span className="text-white/45 text-[12.5px] font-light w-7 text-right tabular-nums">
+                    <span className="comic-body text-[var(--ink)]/50 text-[12.5px] font-bold w-7 text-right tabular-nums">
                       {Math.round(celsiusTo(d.min, tempUnit))}°
                     </span>
-                    <div className="flex-1 h-1.5 rounded-full bg-white/10 relative overflow-hidden">
+                    <div className="flex-1 h-2.5 rounded-full bg-[var(--ink)]/12 border-2 border-[var(--ink)] relative overflow-hidden">
                       <motion.div
                         className="absolute inset-y-0 rounded-full"
-                        style={{ background: "linear-gradient(90deg, #7fb2e8, #f0d9a0)" }}
+                        style={{ background: "linear-gradient(90deg, var(--comic-blue), var(--comic-yellow))" }}
                         initial={{ left: `${left}%`, width: 0 }}
                         animate={{ left: `${left}%`, width: `${Math.max(width, 5)}%` }}
                         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: expanded ? 0.1 + i * 0.045 : 0 }}
                       />
                     </div>
-                    <span className="text-white text-[12.5px] font-semibold w-7 tabular-nums">
+                    <span className="comic-body text-[var(--ink)] text-[12.5px] font-bold w-7 tabular-nums">
                       {Math.round(celsiusTo(d.max, tempUnit))}°
                     </span>
                   </div>
@@ -247,14 +247,14 @@ function MetricCard({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay: 0.12 + index * 0.04, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       whileTap={{ scale: 0.97 }}
-      className="glass-soft rounded-2xl px-3.5 py-3 cursor-default"
+      className="bg-white border-[2.5px] border-[var(--ink)] comic-shadow-sm rounded-xl px-3.5 py-3 cursor-default"
     >
-      <div className="flex items-center gap-1.5 text-white/45 mb-1.5">
+      <div className="flex items-center gap-1.5 text-[var(--ink)]/55 mb-1.5">
         {icon}
-        <span className="text-[10.5px] font-semibold tracking-[0.1em] uppercase">{label}</span>
+        <span className="comic-body text-[10.5px] font-bold tracking-[0.08em] uppercase">{label}</span>
       </div>
-      <div className="text-white text-[20px] font-semibold tabular-nums leading-tight">{value}</div>
-      {hint && <div className="text-white/40 text-[11.5px] font-light mt-0.5 leading-snug">{hint}</div>}
+      <div className="comic-title text-[var(--ink)] text-[22px] tabular-nums leading-tight">{value}</div>
+      {hint && <div className="comic-body text-[var(--ink)]/50 text-[11.5px] font-bold mt-0.5 leading-snug">{hint}</div>}
     </motion.div>
   );
 }
