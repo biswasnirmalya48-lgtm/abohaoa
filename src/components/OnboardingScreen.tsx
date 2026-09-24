@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { IconPin, IconSearch } from "./Icons";
+import MadeWithLove from "./MadeWithLove";
 
 interface Props {
   status: "idle" | "locating" | "denied" | "error" | "unsupported";
@@ -19,6 +20,7 @@ export default function OnboardingScreen({ status, onAllow, onChooseCity }: Prop
       exit={{ opacity: 0, transition: { duration: 0.5 } }}
     >
       <div className="pointer-events-none absolute inset-0 halftone opacity-50" aria-hidden="true" />
+      <MadeWithLove className="absolute inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+20px)]" delay={0.9} />
       <motion.span
         aria-hidden="true"
         className="pointer-events-none absolute left-[12%] top-[24%] text-3xl text-[var(--comic-red)]/40"

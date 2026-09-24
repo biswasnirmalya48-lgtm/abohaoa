@@ -13,6 +13,7 @@ import {
   uviLabel,
 } from "../lib/units";
 import WeatherIcon from "./WeatherIcon";
+import MadeWithLove from "./MadeWithLove";
 import {
   IconChevronUp,
   IconCloudRain,
@@ -222,6 +223,8 @@ export default function ForecastPanel({
               hint={data.daily[1] ? `Tomorrow ${formatTime(data.daily[1].sunrise, timezoneOffset)}` : undefined}
             />
           </motion.div>
+
+          <MadeWithLove className="mt-7 mb-1" delay={0.35} />
         </div>
       </div>
     </motion.div>

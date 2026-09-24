@@ -18,6 +18,7 @@ import SearchModal from "./SearchModal";
 import SavedPanel from "./SavedPanel";
 import SettingsPanel from "./SettingsPanel";
 import ErrorState from "./ErrorState";
+import MadeWithLove from "./MadeWithLove";
 import { IconPin, IconSearch } from "./Icons";
 import { Spinner } from "./OnboardingScreen";
 
@@ -326,6 +327,7 @@ export default function MainScreen({ geoStatus, geoCoords, onRequestLocation, in
                   <IconSearch className="w-4 h-4" /> Search for a city
                 </motion.button>
               </div>
+              <MadeWithLove className="mt-7" delay={0.5} />
             </div>
           </motion.div>
         )}

@@ -6,6 +6,7 @@ import { useAppStore } from "../store/useAppStore";
 import { IconClose, IconPin, IconSearch, IconStar } from "./Icons";
 import { Spinner } from "./OnboardingScreen";
 import BottomSheet from "./BottomSheet";
+import MadeWithLove from "./MadeWithLove";
 
 interface Props {
   open: boolean;
@@ -177,6 +178,7 @@ export default function SearchModal({ open, demo, geoAvailable, onClose, onSelec
         ) : (
           results.map((c, i) => row(c, i))
         )}
+        <MadeWithLove className="mt-6" delay={0.45} />
       </div>
     </BottomSheet>
   );

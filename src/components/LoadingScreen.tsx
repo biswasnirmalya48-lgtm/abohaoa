@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import MadeWithLove from "./MadeWithLove";
 
 /** Animated Abohaoa splash — the wordmark appears only here and in settings. */
 export default function LoadingScreen() {
@@ -10,6 +11,7 @@ export default function LoadingScreen() {
       transition={{ duration: 0.7, ease: "easeInOut" }}
     >
       <div className="pointer-events-none absolute inset-0 halftone opacity-50" aria-hidden="true" />
+      <MadeWithLove className="absolute inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+24px)]" delay={1.2} />
       <div className="relative flex flex-col items-center gap-7">
         <motion.div
           initial={{ scale: 0.6, opacity: 0 }}

@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { IconRefresh, IconSearch } from "./Icons";
+import MadeWithLove from "./MadeWithLove";
 
 interface Props {
   message: string;
@@ -47,6 +48,7 @@ export default function ErrorState({ message, retryable, onRetry, onSearch }: Pr
             <IconSearch className="w-4 h-4" /> Search another city
           </motion.button>
         </div>
+        <MadeWithLove className="mt-7" delay={0.5} />
       </div>
     </motion.div>
   );

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useAppStore, type AnimationIntensity, type ThemePreference } from "../store/useAppStore";
 import { hasApiKey } from "../services/weatherApi";
 import BottomSheet from "./BottomSheet";
+import MadeWithLove from "./MadeWithLove";
 import { IconCheck } from "./Icons";
 import type { TempUnit, SpeedUnit } from "../lib/units";
 
@@ -189,6 +190,7 @@ export default function SettingsPanel({ open, onClose }: Props) {
           <span className="comic-body text-[var(--ink)]/45 text-[11px] font-bold tracking-wide">
             A living weather window · v2.0
           </span>
+          <MadeWithLove className="mt-1" delay={0.5} />
         </div>
       </div>
     </BottomSheet>

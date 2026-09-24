@@ -3,6 +3,7 @@ import type { City } from "../types/weather";
 import { useAppStore } from "../store/useAppStore";
 import { IconCheck, IconPin, IconTrash, IconSearch } from "./Icons";
 import BottomSheet from "./BottomSheet";
+import MadeWithLove from "./MadeWithLove";
 
 interface Props {
   open: boolean;
@@ -109,6 +110,7 @@ export default function SavedPanel({
             ))}
           </AnimatePresence>
         )}
+        <MadeWithLove className="mt-6" delay={0.45} />
       </div>
     </BottomSheet>
   );
